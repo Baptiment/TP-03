@@ -1,0 +1,47 @@
+#include <Servo.h> 
+Servo servo; // création du servo issu du moule Servo
+// introduction des constantes
+const int servomoteur = 9; //servomoteur sur pin 9
+const int bouton = 2; //bouton poussoir sur pin 2
+const int ledRouge = 3; //led rouge sur pin 3
+const int ledVerte = 4; //led verte sur pin 4
+// le code dans cette fonction est exécuté une fois au début
+void setup()
+{
+// on communique avec l'ordinateur
+Serial.begin(9600); 
+// indique que les broches des LED sont des sorties
+pinMode(ledRouge, OUTPUT);
+pinMode(ledVerte, OUTPUT);
+// indique que la broche bouton est une entrée :
+pinMode(bouton, INPUT);
+// on connecte le servomoteur branché sur la broche 9
+servo.attach(servomoteur);
+// allume le feu rouge
+digitalWrite(ledRouge, HIGH); 
+// ferme la barrière
+servo.write(0);
+}
+// création de la boucle 
+void loop()
+{
+if ( digitalRead(bouton) == HIGH ) { //si le bouton est appuyé
+Serial.print("Bouton appuye"); //on envoie un message sur le moniteur série
+for (int pos = 0; pos <= 90; pos++) { //et on remonte la barrière de 90°
+servo.write(pos);
+delay(15);
+ }
+//on allume le feu vert durant 5 secondes
+digitalWrite(ledRouge, LOW); //led rouge éteinte
+digitalWrite(ledVerte, HIGH); //led verte allumée
+delay(5000); //attente de 5 secondes
+//on repasse au rouge
+digitalWrite(ledVerte, LOW); //led verte éteinte
+digitalWrite(ledRouge, HIGH); //led rouge allumée
+//on redescend la barrière
+for(int pos = 90; pos>=0; pos--) {
+servo.write(pos);
+delay(15);
+ }
+ }
+}
